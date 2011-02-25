@@ -1,0 +1,122 @@
+/* Travail de Luc Sarzyniec et Rémi Meresse 1Agr4 utilisant java 1.5 */
+
+--Étape 1---
+usage : java adpo.test.Test <formule 0> <formule 1> ... <formule n>
+
+Exemple d'utilisation : java adpo.test.Test "r0()" "r0() OU r1()" "r1()"
+
+[Dans notre exemple, { formule0, NON formule1, formule2 } entreront en 
+résolution]
+
+Les classes importantes pour le traitement de l'étape 1 sont :
+	* adpo.formule.Formule
+	* adpo.formule.Clause
+	* adpo.resolution.ClauseResolution
+
+Comme pour le moment la négation n'est pas implantée correctement (on ne traite
+que des clauses), pour pouvoir tout de même tester le système de résolution basé
+sur les clauses, nous inverseront tous les formules d'indice impair.
+
+Par manque de précisions dans le sujet, nous avons implantés une table d'Analyse
+pour l'analyse lexicale.
+
+Pour le moment il n'est pas possible de lire à partir d'un fichier.
+
+La descente des négations est déjà implantée, il manque la remontée des clauses,
+la skolemisation, le traitement des quantifieurs et le système de formel de 
+Robinson. Pour l'instant les Atomes sont des relations vides positives ou 
+négatives.
+
+
+---Étape 2---
+usage: 	java fichierMain -e "<formule>"
+	java fichierMain [-f] <fichier>
+
+Exemples d'utilisation : java adpo.test.TestResolution fichier
+			 java adpo.test.TestFormule -e "r1() ET r2() => r1()"
+			 java adpo.test.Tests -f fichier
+
+Les classes de tests executables sont les suivantes :
+	* adpo.test.TestAnalyse
+	* adpo.test.TestFormule
+	* adpo.test.TestResolution
+	* adpo.test.Tests (execute tous les tests)
+
+Les classes importantes pour le traitement de l'étape 2 sont :
+	* adpo.formule.Clause
+	* adpo.formule.FormeClausale
+	* adpo.resolution.ClauseResolution
+
+Vous pourrez remarquer que nous avons ajouté une méthode simplification() à
+l'interface adpo.formule.Formule, elle permet de simplifier une Formule en 
+simplifiant les opérations portant sur VRAI et FAUX.
+
+Pour l'instant nous n'avons toujours pas implémenté le programme principal,
+pour les tests, il faut passer par les classes de tests.
+
+
+---Étape 3---
+usage: 	java fichierMain -e "<formule>"
+	java fichierMain [-f] <fichier>
+
+Exemples d'utilisation : java adpo.test.TestAnalyse fichier
+			 java adpo.test.TestRobinsonResolution -e "(r1(a) ET 
+			 	r1(x) ET r3(x,b)) OU NON r2(x) OU (NON r3(c,y) 
+				ET r2(c))"
+			 java adpo.test.Tests -f fichier
+
+Les classes de tests executables sont les suivantes :
+	* adpo.test.TestAnalyse
+	* adpo.test.TestFormule
+	* adpo.test.TestResolution
+	* adpo.test.TestRobinsonResolution
+	* adpo.test.TestClauseResolution
+	* adpo.test.Tests (execute tous les tests)
+
+Les classes importantes pour le traitement de l'étape 3 sont :
+	* adpo.formule.EnsembleTerme
+	* adpo.formule.Variable, adpo.formule.Constante, adpo.formule.Fonction
+	* adpo.resolution.Substitution
+	* adpo.resolution.Unification
+	* adpo.resolution.RobinsonResolution
+
+Atome et Fonction héritent tous les deux de la classe abstraite EnsembleTerme
+qui permet de traiter plus aisement les ensembles de Termes (interface qui est
+implémentée par Variable, Constante et Fonction).
+
+La classe Substitution permet de stocker un ensemble de règles de substitutions
+ainsi que de les appliquer à un Atome.
+La classe Unification permet quand à elle d'unifier deux Atomes (si cela est
+possible) en utilisant toutes la méthode conseillée par nos enseignants.
+Les substitutions semblent être faites convenablement, y compris dans les 
+groupes de termes.
+
+La classe RobinsonResolution est fonctionelle et permet d'appliquer la méthode
+de Robinson pour montrer qu'une formule est un théorême de la logique du premier
+ordre.
+Tous les choix sont fait de manières interactive, ainsi l'utilisateur
+choisi la rêgle à appliquer, il détermine ensuite sur quelle clause(s)
+l'appliquer, enfin il a le choix de la substitution à appliquer.
+
+Pour l'instant nous n'avons toujours pas implémenté le programme principal,
+pour les tests, il faut passer par les classes de tests.
+
+---Étape 4---
+Exemples d'utilisation : java adpo.Main fichier
+			 java adpo.Main -e "Axp(x) => Eyp(y)"
+			 java adpo.Main -f fichier
+
+Les classes importantes pour le traitement de l'étape 4 sont :
+	* adpo.formule.IlExite, adpo.formule.PourTout
+	* adpo.resolution.FormeClausale
+	* adpo.formule.Closible
+
+Les classes IlExiste et PourTout nous ont permis d'implémenter les quantifieurs.
+Ces deux classes implémentent l'interface Formule, plus précisément la classe 
+abstraite Binaire pour laquelle nous utilisons maintenant la généricité. Ainsi,
+IlExiste et PourTout étendent Binaire<Variable,Formule>, nous en avons profité 
+pour transformer Unaire de la même façon.
+
+On a implémenté la cloture universelle à l'aide de l'interface Closible.
+La skolemisation est implémentée grâce à une méthode de l'interface Formule.
+On a ajouté le programme principal dans la classe Main.
